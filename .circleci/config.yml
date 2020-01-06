@@ -1,0 +1,51 @@
+version: 2
+jobs:
+  validate:
+    machine: true
+    steps:
+      - checkout
+      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' > .circleci/tasks.txt
+      - run: |
+          if [[ ! -s .circleci/tasks.txt ]]; then
+            echo "Invalid submission; evaluable change not found"
+            exit 1
+          fi
+      - persist_to_workspace:
+          root: .
+          paths: .circleci/tasks.txt
+      - run: |
+          for f in $(cat .circleci/tasks.txt); do
+            if [[ ! -f ${f}Makefile ]]; then
+              echo "Invalid submission; Makefile not found"
+              exit 1
+            fi
+          done
+  evaluate:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workpace:
+          at: /tmp
+      - checkout
+      - run:
+          name: Activate GCP service account
+          command: |
+            apt-get install -qq -y gettext
+            echo $GCP_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project $GCP_PROJECT_ID
+      - run: |
+          for task in $(cat /tmp/.circleci/tasks.txt); do
+            cd ~/project/${task}
+            gsutil -m cp gs://cdn.openrm.jp/ml/datasets/rotdoc90/images/* data/test/
+            make
+          done
+
+workflows:
+  version: 2
+  submission:
+    jobs:
+      - validate
+      - evaluate:
+          context: hackathon
+          requires:
+            - validate
