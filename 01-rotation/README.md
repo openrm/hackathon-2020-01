@@ -11,3 +11,23 @@ To detect skewed rotation of document images, in multiples of 90 degree
 ### テストデータ / Data
 
 (preparing...)
+
+### 提出 / Submission
+
+We ask to submit a script to predict the rotations for the test images, that will be downloaded under `data/test` during the CI pipeline. The results must be formatted in a specified way so that we can evaluate it.
+
+Thus, the script has to:
+
+ - walk through the directory `data/test`, and load found images (named `*.png` or `*.jpg`)
+ - predict skewed rotation for each image
+ - output to the standard output the results and the original file names in CSV format
+
+### 出力例 / Sample Output
+
+```csv
+filename,label
+001.png,90
+002.png,0
+abcd.png,270
+...
+```
