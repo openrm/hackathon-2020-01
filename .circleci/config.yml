@@ -1,0 +1,70 @@
+version: 2
+jobs:
+  validate:
+    machine: true
+    steps:
+      - checkout
+      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' | sed 's/.$//' > .circleci/tasks.txt
+      - run: |
+          if [[ ! -s .circleci/tasks.txt ]]; then
+            echo "Invalid submission; evaluable change not found"
+            exit 1
+          fi
+      - run: |
+          for f in $(cat .circleci/tasks.txt); do
+            if [[ ! -f ${f}/Makefile ]]; then
+              echo "Invalid submission; Makefile not found"
+              exit 1
+            fi
+          done
+      - persist_to_workspace:
+          root: .
+          paths: .circleci
+  evaluate:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - checkout
+      - run:
+          name: Activate GCP service account
+          command: |
+            apt-get install -qq -y gettext
+            echo $GCP_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project $GCP_PROJECT_ID
+      - run: |
+          for task in $(cat /tmp/.circleci/tasks.txt); do
+            cd ~/project/${task}
+
+            task_upper=$(echo ${task##*-} | awk '{print toupper($0)}')
+            var_data="DATA_URI_PATTERN_${task_upper}"
+
+            gsutil -m cp ${!var_data} data/test/
+            make > prediction.csv
+          done
+      - run: |
+          pip install -q tensorflow keras PyGithub
+          for task in $(cat /tmp/.circleci/tasks.txt); do
+            cd ~/project/${task}
+
+            task_id=${task##*-}
+            task_upper=$(echo ${task_id} | awk '{print toupper($0)}')
+            var_labels="LABELS_URI_${task_upper}"
+
+            gsutil cp ${!var_labels} ground_truth.csv
+            score=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
+            curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"competition\":\"${CIRCLE_PROJECT_REPONAME}/${task}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
+          done
+workflows:
+  version: 2
+  submission:
+    jobs:
+      - validate
+      - evaluate:
+          context: hackathon
+          filters:
+            branches:
+              ignore: /pull\/[0-9]+/
+          requires:
+            - validate
