@@ -9,9 +9,11 @@ reponame = '{}/{}'.format(os.environ.get('CIRCLE_PROJECT_USERNAME'),
 commit_id = os.environ.get('CIRCLE_SHA1')
 
 pr_number = os.environ.get('CIRCLE_PR_NUMBER')
-if not pr_number:
+if not pr_number and 'CIRCLE_PULL_REQUEST' in os.environ:
     uri = os.environ.get('CIRCLE_PULL_REQUEST')
     pr_number = os.path.basename(uri)
+
+is_pr = pr_number is not None
 
 PR_COMMENT_MSG = '''
 **Submission completed**
@@ -29,9 +31,11 @@ def comment_result(competition_info,
                    metrics,
                    reponame=reponame,
                    commit_id=commit_id,
-                   pr_number=int(pr_number)):
+                   pr_number=pr_number):
+    if not is_pr:
+        return
     repo = g.get_repo(reponame)
-    pr = repo.get_pull(pr_number)
+    pr = repo.get_pull(int(pr_number))
     body = PR_COMMENT_MSG.format(
         commit_id,
         competition_info.name,

@@ -20,6 +20,11 @@ jobs:
       - persist_to_workspace:
           root: .
           paths: .circleci
+      - run: echo ${CIRCLE_PULL_REQUEST} > pr
+      - save_cache:
+          key: pr-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - pr
   evaluate:
     docker:
       - image: google/cloud-sdk
@@ -43,7 +48,13 @@ jobs:
             gsutil -m cp ${!var_data} data/test/
             make > prediction.csv
           done
+      - restore_cache:
+          keys:
+            - pr-{{ .Environment.CIRCLE_SHA1 }}
       - run: |
+          if [[ -z "$CIRCLE_PULL_REQUEST" ]]; then
+            export CIRCLE_PULL_REQUEST=$(cat /home/circleci/project/pr)
+          fi
           pip install -q tensorflow keras PyGithub
           for task in $(cat /tmp/.circleci/tasks.txt); do
             cd ~/project/${task}
