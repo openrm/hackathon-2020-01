@@ -44,7 +44,7 @@ jobs:
             make > prediction.csv
           done
       - run: |
-          pip install -q tensorflow keras
+          pip install -q tensorflow keras PyGithub
           for task in $(cat /tmp/.circleci/tasks.txt); do
             cd ~/project/${task}
 
@@ -54,8 +54,7 @@ jobs:
 
             gsutil cp ${!var_labels} ground_truth.csv
             score=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
-            echo "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"score\":${score}}"
-            # curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
+            curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"competition\":\"${CIRCLE_PROJECT_REPONAME}/${task}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
           done
 workflows:
   version: 2
