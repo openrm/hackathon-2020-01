@@ -10,9 +10,6 @@ jobs:
             echo "Invalid submission; evaluable change not found"
             exit 1
           fi
-      - persist_to_workspace:
-          root: .
-          paths: .circleci/tasks.txt
       - run: |
           for f in $(cat .circleci/tasks.txt); do
             if [[ ! -f ${f}Makefile ]]; then
@@ -20,6 +17,9 @@ jobs:
               exit 1
             fi
           done
+      - persist_to_workspace:
+          root: .
+          paths: .circleci
   evaluate:
     docker:
       - image: google/cloud-sdk
@@ -36,10 +36,26 @@ jobs:
       - run: |
           for task in $(cat /tmp/.circleci/tasks.txt); do
             cd ~/project/${task}
-            gsutil -m cp gs://cdn.openrm.jp/ml/datasets/rotdoc90/images/* data/test/
-            make
-          done
 
+            task_upper=$(echo ${task$$*-} | awk '{print toupper(0)}')
+            var_data="DATA_URI_PATTERN_${task_upper}"
+
+            gsutil -m cp ${!var_data} data/test/
+            make > prediction.csv
+          done
+      - run: |
+          pip install keras
+          for task in $(cat /tmp/.circleci/tasks.txt); do
+            cd ~/project/${task}
+
+            task_id=${task##*-}
+            task_upper=$(echo ${task_id} | awk '{print toupper(0)}')
+            var_labels="LABELS_URI_${task_upper}"
+
+            gsutil cp ${!var_labels} ground_truth.csv
+            score=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
+            curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
+          done
 workflows:
   version: 2
   submission:
