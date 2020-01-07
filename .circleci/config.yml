@@ -63,5 +63,8 @@ workflows:
       - validate
       - evaluate:
           context: hackathon
+          filters:
+            branches:
+              ignore: /pull\/[0-9]+/
           requires:
             - validate
