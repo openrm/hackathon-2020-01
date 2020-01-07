@@ -13,8 +13,8 @@ if __name__ == '__main__':
     assert os.path.exists(flags.pred_path)
     assert os.path.exists(flags.true_path)
 
-    with open(flags.pred_path, 'r', newline='') as pred_f, \
-            open(flags.true_path, 'r', newline='') as true_f:
+    with open(flags.pred_path, 'r') as pred_f, \
+            open(flags.true_path, 'r') as true_f:
         pred_dict = {name: label for name, label in csv.reader(pred_f)}
         true_dict = {name: label for name, label in csv.reader(true_f)}
         files = true_dict.keys()

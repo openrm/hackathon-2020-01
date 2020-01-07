@@ -4,7 +4,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' > .circleci/tasks.txt
+      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' | sed 's/.$//' > .circleci/tasks.txt
       - run: |
           if [[ ! -s .circleci/tasks.txt ]]; then
             echo "Invalid submission; evaluable change not found"
@@ -12,7 +12,7 @@ jobs:
           fi
       - run: |
           for f in $(cat .circleci/tasks.txt); do
-            if [[ ! -f ${f}Makefile ]]; then
+            if [[ ! -f ${f}/Makefile ]]; then
               echo "Invalid submission; Makefile not found"
               exit 1
             fi
@@ -24,7 +24,7 @@ jobs:
     docker:
       - image: google/cloud-sdk
     steps:
-      - attach_workpace:
+      - attach_workspace:
           at: /tmp
       - checkout
       - run:
@@ -37,24 +37,25 @@ jobs:
           for task in $(cat /tmp/.circleci/tasks.txt); do
             cd ~/project/${task}
 
-            task_upper=$(echo ${task$$*-} | awk '{print toupper(0)}')
+            task_upper=$(echo ${task##*-} | awk '{print toupper($0)}')
             var_data="DATA_URI_PATTERN_${task_upper}"
 
             gsutil -m cp ${!var_data} data/test/
             make > prediction.csv
           done
       - run: |
-          pip install keras
+          pip install -q tensorflow keras
           for task in $(cat /tmp/.circleci/tasks.txt); do
             cd ~/project/${task}
 
             task_id=${task##*-}
-            task_upper=$(echo ${task_id} | awk '{print toupper(0)}')
+            task_upper=$(echo ${task_id} | awk '{print toupper($0)}')
             var_labels="LABELS_URI_${task_upper}"
 
             gsutil cp ${!var_labels} ground_truth.csv
             score=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
-            curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
+            echo "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"score\":${score}}"
+            # curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
           done
 workflows:
   version: 2
