@@ -4,11 +4,11 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' | sed 's/.$//' > .circleci/tasks.txt
+      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' | sed 's/.$//' || true > .circleci/tasks.txt
       - run: |
           if [[ ! -s .circleci/tasks.txt ]]; then
             echo "Invalid submission; evaluable change not found"
-            exit 1
+            circleci step halt
           fi
       - run: |
           for f in $(cat .circleci/tasks.txt); do
@@ -54,7 +54,7 @@ jobs:
 
             gsutil cp ${!var_labels} ground_truth.csv
             score=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
-            curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"competition\":\"${CIRCLE_PROJECT_REPONAME}/${task}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
+            # curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"competition\":\"${CIRCLE_PROJECT_REPONAME}/${task}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
           done
 workflows:
   version: 2

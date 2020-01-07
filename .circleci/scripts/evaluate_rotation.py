@@ -6,6 +6,8 @@ from keras import metrics, backend as K
 
 import common
 
+is_pr = 'CIRCLE_PR_NUMBER' in os.environ
+
 class INFO:
     name = 'Document Image Rotation Correction'
 
@@ -34,6 +36,7 @@ if __name__ == '__main__':
         score = compute_accuracy(y_pred=[pred_dict.get(name) for name in files],
                                  y_true=[true_dict.get(name) for name in files])
 
-        common.comment_result(INFO, {'Accuracy': score})
+        if is_pr:
+            common.comment_result(INFO, {'Accuracy': score})
 
         print(score)
