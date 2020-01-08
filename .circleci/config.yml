@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+parameters:
+  CIRCLE_PR_NUMBER:
+    type: integer
+    default: 0
 jobs:
   validate:
     machine: true
@@ -20,11 +24,6 @@ jobs:
       - persist_to_workspace:
           root: .
           paths: .circleci
-      - run: echo ${CIRCLE_PULL_REQUEST} > pr
-      - save_cache:
-          key: pr-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-            - pr
   evaluate:
     docker:
       - image: openrm/gcloud-sdk:hackathon-2020-01
@@ -52,13 +51,8 @@ jobs:
             gsutil -m cp ${!var_data} data/test/
             make > prediction.csv
           done
-      - restore_cache:
-          keys:
-            - pr-{{ .Environment.CIRCLE_SHA1 }}
       - run: |
-          if [[ -z "$CIRCLE_PULL_REQUEST" ]]; then
-            export CIRCLE_PULL_REQUEST=$(cat /home/circleci/project/pr)
-          fi
+          export CIRCLE_PR_NUMBER=<< pipeline.parameters.CIRCLE_PR_NUMBER >>
           for task in $(cat /tmp/.circleci/tasks.txt); do
             cd ~/project/${task}
 
