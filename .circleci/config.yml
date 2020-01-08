@@ -31,6 +31,10 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp
+      - run: |
+          if [[ ! -f /tmp/.circleci/tasks.txt ]]; then
+            circleci step halt
+          fi
       - checkout
       - run:
           name: Activate GCP service account
