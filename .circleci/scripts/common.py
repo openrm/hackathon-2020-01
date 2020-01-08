@@ -39,5 +39,5 @@ def comment_result(competition_info,
     body = PR_COMMENT_MSG.format(
         commit_id,
         competition_info.name,
-        '\n'.join(['{}: `{}`'.format(k, v) for k, v in metrics.items()]))
+        '\n'.join(['{}: `{}`'.format(k.capitalize(), v) for k, v in metrics.items()]))
     pr.create_issue_comment(body)

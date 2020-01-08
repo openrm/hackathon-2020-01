@@ -1,5 +1,6 @@
 import os
 import csv
+import json
 import argparse
 import numpy as np
 from keras import metrics, backend as K
@@ -31,9 +32,10 @@ if __name__ == '__main__':
         true_dict = {name: label for name, label in csv.reader(true_f)}
         files = true_dict.keys()
 
-        score = compute_accuracy(y_pred=[pred_dict.get(name) for name in files],
-                                 y_true=[true_dict.get(name) for name in files])
+        accuracy = compute_accuracy(y_pred=[pred_dict.get(name) for name in files],
+                                    y_true=[true_dict.get(name) for name in files])
 
-        common.comment_result(INFO, {'Accuracy': score})
+        metrics = {'accuracy': accuracy, 'score': accuracy}
+        common.comment_result(INFO, metrics)
 
-        print(score)
+        print(json.dumps(metrics))

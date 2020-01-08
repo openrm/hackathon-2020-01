@@ -64,8 +64,9 @@ jobs:
             var_labels="LABELS_URI_${task_upper}"
 
             gsutil cp ${!var_labels} ground_truth.csv
-            score=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
-            # curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"competition\":\"${CIRCLE_PROJECT_REPONAME}/${task}\",\"score\":${score}}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
+            metrics=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
+            score=$(echo $metrics | jq '.score')
+            # curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"competition\":\"${CIRCLE_PROJECT_REPONAME}/${task}\",\"score\":${score},\"details\":$(echo $metrics | jq -c 'del(.score)')}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
           done
 workflows:
   version: 2
