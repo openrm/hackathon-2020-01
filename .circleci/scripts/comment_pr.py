@@ -1,5 +1,12 @@
 import os
+import sys
+import argparse
 from github import Github
+
+
+"""
+Environment variables
+"""
 
 token = os.environ.get('GITHUB_ACCESS_TOKEN')
 assert token, '[GITHUB_ACCESS_TOKEN] not set'
@@ -15,6 +22,11 @@ if not pr_number and 'CIRCLE_PULL_REQUEST' in os.environ:
 
 is_pr = pr_number is not None
 
+
+"""
+Template
+"""
+
 PR_COMMENT_MSG = '''
 **Submission completed**
 Commit {} has been evaluated:
@@ -25,6 +37,8 @@ Task: {}
 Check out the leaderboard [here]() :trophy:
 '''
 
+
+# Init Github client
 g = Github(token)
 
 def comment_result(competition_info,
@@ -41,3 +55,23 @@ def comment_result(competition_info,
         competition_info.name,
         '\n'.join(['{}: `{}`'.format(k.capitalize(), v) for k, v in metrics.items()]))
     pr.create_issue_comment(body)
+
+
+import evaluate_rotation as rotation
+
+def resolve_task(task_id):
+    if task_id == rotation.INFO.id:
+        return rotation.INFO;
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('task_id', type=str)
+    parser.add_argument('infile', type=argparse.FileType('r'), default=sys.stdin)
+    flags = parser.parse_args()
+
+    metrics = json.load(flags.infile)
+    competition_info = resolve_task(flags.task_id)
+
+    comment_result(competition_info,
+                   metrics)

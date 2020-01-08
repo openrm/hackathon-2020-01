@@ -67,6 +67,7 @@ jobs:
             metrics=$(python /tmp/.circleci/scripts/evaluate_${task_id}.py prediction.csv ground_truth.csv)
             score=$(echo $metrics | jq '.score')
             # curl ${API_ORIGIN}/metrics --data "{\"competitor\":\"${CIRCLE_PR_USERNAME}\",\"competition\":\"${CIRCLE_PROJECT_REPONAME}/${task}\",\"score\":${score},\"details\":$(echo $metrics | jq -c 'del(.score)')}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${API_SECRET_TOKEN}"
+            echo ${metrics} | python /tmp/.circleci/scripts/comment_pr.py ${task_id}
           done
 workflows:
   version: 2

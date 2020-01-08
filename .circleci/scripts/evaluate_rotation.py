@@ -5,9 +5,8 @@ import argparse
 import numpy as np
 from keras import metrics, backend as K
 
-import common
-
 class INFO:
+    id = '01-rotation'
     name = 'Document Image Rotation Correction'
 
 def compute_accuracy(y_pred=[], y_true=[]):
@@ -36,6 +35,5 @@ if __name__ == '__main__':
                                     y_true=[true_dict.get(name) for name in files])
 
         metrics = {'accuracy': accuracy, 'score': accuracy}
-        common.comment_result(INFO, metrics)
 
         print(json.dumps(metrics))
