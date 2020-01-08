@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import argparse
 from github import Github
 
@@ -67,7 +68,7 @@ def resolve_task(task_id):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('task_id', type=str)
-    parser.add_argument('infile', type=argparse.FileType('r'), default=sys.stdin)
+    parser.add_argument('infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
     flags = parser.parse_args()
 
     metrics = json.load(flags.infile)
