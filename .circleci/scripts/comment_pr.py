@@ -58,11 +58,11 @@ def comment_result(competition_info,
     pr.create_issue_comment(body)
 
 
-import evaluate_rotation as rotation
+import evaluate_rotation_correction as rotation_correction
 
 def resolve_task(task_id):
-    if task_id == rotation.INFO.id:
-        return rotation.INFO;
+    if task_id == rotation_correction.INFO.id:
+        return rotation_correction.INFO;
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ class INFO:
     name = 'Document Image Rotation Correction'
 
 def compute_accuracy(y_pred=[], y_true=[]):
-    y_pred, y_true = np.array(y_pred, dtype=int), \
+    y_pred, y_true = np.array([y if y else -1 for y in y_pred], dtype=int), \
         np.array(y_true, dtype=int)
 
     acc = metrics.accuracy(y_pred, y_true)
