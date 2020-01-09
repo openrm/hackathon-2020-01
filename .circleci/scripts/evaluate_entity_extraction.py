@@ -33,6 +33,7 @@ def compute_similarity(pred_dict, true_dict):
     for k, true in true_dict.items():
         true = true if true else ''
         pred = pred_dict[k] if k in pred_dict and pred_dict[k] else ''
+        true, pred = true.decode('utf-8'), pred.decode('utf-8')
         score = float(Levenshtein.distance(pred, true)) / max(len(true), len(pred)) \
             if true or pred else 0
         score_sum += score
