@@ -32,8 +32,8 @@ Particpants can team up and work as a team, or contribute as individual.
 
 このハッカソンでは複数の問題から好きなものを選んで挑戦していただけます。したがってランキングは問題ごとに作成されます。各問題の詳細については、子ディレクトリを参照してください。
 
- - [01 - 書類画像の向き補正](/01-rotation)
- 
+ - [01 - 書類画像の向き補正](/01-rotation_correction)
+
 回答を提出するにはまずこのレポジトリをフォークし、プルリクエストを開く必要があります。問題がなければ数分でスコア評価が完了し、プルリクエスト上のコメントにスコアが表示されます。
 
 提出形式などの詳細は各ディレクトリのREADMEを参照してください。
@@ -41,8 +41,8 @@ Particpants can team up and work as a team, or contribute as individual.
 
 There are different problems to solve in this Hackathon, each one has its own category and ranking. Please see the project sub-folders to have more detailed explanation on each specific problem:
 
-  - [01 - Document image rotation correction](/01-rotation)
-  
+  - [01 - Document image rotation correction](/01-rotation_correction)
+
 
 To submit your work, fork the repository and open a pull request against this repository. Automatically, your solution will be tested and ranked. After a few minutes, a comment should appear on the pull request to display the submission score.
 

@@ -6,7 +6,7 @@ import numpy as np
 from keras import metrics, backend as K
 
 class INFO:
-    id = '01-rotation'
+    id = 'rotation_correction'
     name = 'Document Image Rotation Correction'
 
 def compute_accuracy(y_pred=[], y_true=[]):
