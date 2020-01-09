@@ -6,7 +6,7 @@ import Levenshtein
 
 class INFO:
     id = 'entity_extraction'
-    name = 'Named Entity Extraction from Train Tickets'
+    name = 'Entity Extraction from Train Ticket Images'
 
 def get_reader(f):
     has_header = csv.Sniffer().has_header(f.read(256))
