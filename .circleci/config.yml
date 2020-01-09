@@ -51,6 +51,7 @@ jobs:
             task_upper=$(echo ${task##*-} | awk '{print toupper($0)}')
             var_data="DATA_URI_PATTERN_${task_upper}"
 
+            mkdir -p data/test
             gsutil -qm cp ${!var_data} data/test/
             make > prediction.csv
           done
