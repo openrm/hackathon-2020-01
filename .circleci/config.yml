@@ -11,7 +11,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' | sed 's/.$//' > .circleci/tasks.txt || true
+      - run: git diff --dirstat=0 origin/master..HEAD | awk '{print $2}' | grep -e '^[0-9]\+-' | sed 's/.$//' | grep -v / > .circleci/tasks.txt || true
       - run: |
           if [[ ! -s .circleci/tasks.txt ]]; then
             echo "Invalid submission; evaluable change not found"
