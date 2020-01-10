@@ -13,6 +13,24 @@ The objective of this research is to detect skewed rotation of document images, 
 ### テストデータ / Data
 
 There is around 3000 images in the dataset, each one of them is rotated in a specific angle (multiple of 90).
+Here are some of them:
+
+Label: `0`
+
+<img height="700" width="500" src="https://user-images.githubusercontent.com/20988826/72118472-923eff80-3394-11ea-9b0c-83853e2a78ea.jpg" />
+
+Label: `90`
+
+<img height="400" width="520" src="https://user-images.githubusercontent.com/20988826/72118615-01b4ef00-3395-11ea-8d28-8c5fbe81d9e2.jpg"></img>
+
+
+Label: `180`
+
+<img height="400" width="520" src="https://user-images.githubusercontent.com/20988826/72118949-32495880-3396-11ea-99a6-7b409061637e.jpg"></img>
+
+Label: `270`
+
+<img height="400" width="520" src="https://user-images.githubusercontent.com/20988826/72118101-74bd6600-3393-11ea-9911-171699e7059f.jpg"></img>
 
 The submissions will be tested against this dataset.
 
