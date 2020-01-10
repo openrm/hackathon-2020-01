@@ -1,6 +1,8 @@
 # hackathon-2020-01
 Image processing and ML Hackathon - Open Room Inc. / RICOH - January 2020
 
+[https://hackathon.openrm.jp/](https://hackathon.openrm.jp/)
+
 ## 概要 / Summary
 
 近年コンピュータービジョンの諸技術は紙ベースの様々な業界を変革してきました。しかし、英語などの言語での著しい発展の一方で、日本語への応用は出遅れているというのが現状です。このハッカソンは国内におけるコンピュータビジョン分野の研究の発展と、それによる日本語ドキュメント画像の認識技術の向上を目標に掲げます。このハッカソンイベントを通じて、日本のスタートアップ生態系の技術的発展とIT業界の革命を加速させてみませんか？
