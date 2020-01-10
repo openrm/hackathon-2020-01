@@ -31,6 +31,8 @@ def build_dict(gen):
 
 def compute_similarity(pred_dict, true_dict):
     score_sum = 0
+    if not pred_dict:
+        return 1
     for k, true in true_dict.items():
         true = true if true else ''
         pred = pred_dict[k] if k in pred_dict and pred_dict[k] else ''
