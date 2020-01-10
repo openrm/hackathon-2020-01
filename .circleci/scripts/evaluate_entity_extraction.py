@@ -22,10 +22,11 @@ def build_dict(gen):
             'line': line,
             'company': company,
             'price': price,
-            'issued_at': issued_at,
-            'expire_at': expire_at
+            'issued_on': issued_on,
+            'available_from': available_from,
+            'expire_on': expire_on
         }
-        for name, origin, dest, line, company, price, issued_at, expire_at in gen
+        for name, origin, dest, line, company, price, issued_on, available_from, expire_on in gen
     }
 
 def compute_similarity(pred_dict, true_dict):
