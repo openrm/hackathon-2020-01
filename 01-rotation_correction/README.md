@@ -8,7 +8,7 @@ One difficult problem to solve, is to identify in wich direction is a text docum
 
 ## 課題 / Task
 
-The objective of this research is to detect skewed rotation of document images, in multiples of 90 degree. 
+The objective of this research is to detect skewed rotation of document images, in multiples of 90 degree.
 
 ### テストデータ / Data
 
@@ -23,16 +23,16 @@ We ask to submit a script to predict the rotations for the test images, that wil
 Thus, the script has to:
 
  - walk through the directory `data/test`, and load found images (named `*.png` or `*.jpg`)
- - predict the rotation angle for each image (0, 90, 180, 260)
+ - predict the rotation angle for each image (0, 90, 180, 270)
  - output to the standard output the results and the original file names in CSV format (see below)
 
 ### 出力例 / Sample Output
 
-Stdin must return a result formatted as:
+Stdout must return a result formatted as:
 ```csv
 filename,label
 001.png,90
 002.png,0
-abcd.png,260
+abcd.png,270
 ...
 ```
