@@ -35,7 +35,7 @@ Commit {} has been evaluated:
 Task: {}
 {}
 
-Check out the leaderboard [here]() :trophy:
+Check out the leaderboard [here](https://hackathon.openrm.jp/) :trophy:
 '''
 
 
