@@ -4,6 +4,8 @@ import json
 import argparse
 from github import Github
 
+import common
+
 
 """
 Environment variables
@@ -57,14 +59,6 @@ def comment_result(competition_info,
         '\n'.join(['{}: `{}`'.format(k.capitalize(), v) for k, v in metrics.items()]))
     pr.create_issue_comment(body)
 
-
-import evaluate_rotation_correction as rotation_correction
-
-def resolve_task(task_id):
-    if task_id == rotation_correction.INFO.id:
-        return rotation_correction.INFO;
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('task_id', type=str)
@@ -72,7 +66,7 @@ if __name__ == '__main__':
     flags = parser.parse_args()
 
     metrics = json.load(flags.infile)
-    competition_info = resolve_task(flags.task_id)
+    competition_info = common.resolve_task(flags.task_id)
 
     comment_result(competition_info,
                    metrics)
