@@ -57,8 +57,8 @@ if __name__ == '__main__':
         score_sum = 0
 
         for key in files:
-            if key in pred_dict:
-                score_sum += compute_similarity(pred_dict[key], true_dict[key])
+            score_sum += compute_similarity(pred_dict[key] if key in pred_dict else dict(),
+                                            true_dict[key])
 
         score = 1 - score_sum / len(files)
         metrics = {'accuracy': score, 'score': score}
